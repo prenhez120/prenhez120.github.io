@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Simulador · Prenhez 120</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<nav class="nav">
+  <div class="wrap">
+    <a class="logo" href="index.html"><i aria-hidden="true"></i>Prenhez 120</a>
+    <div class="nav-right">
+      <span class="who" id="who"></span>
+      <a class="btn btn-outline btn-sm" href="index.html">Apresentação</a>
+      <button type="button" class="btn btn-outline btn-sm" id="sair">Sair</button>
+    </div>
+  </div>
+</nav>
+
+<header class="sim-head">
+  <div class="wrap">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span class="eyebrow">Simulador de lotes · valores em guaranis</span>
+      <h1 id="title">Seu cenário, <em>lote a lote.</em></h1>
+    </div>
+    <a class="btn btn-sm" href="#salvas" style="background:#fff;color:var(--ink)">Minhas simulações <span id="countBadge" class="badge good" style="margin-left:4px">0</span></a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="notice warn" id="demoNote" hidden style="margin-top:20px">Modo de demonstração: as simulações ficam salvas apenas neste navegador até a planilha ser ligada.</div>
+
+  <div class="sim">
+    <!-- CONTROLES -->
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <form class="card controls" id="ctl" onsubmit="return false">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span class="eyebrow">Seu capital</span>
+          <div class="pills" role="group" aria-label="Moeda do capital" id="moedas">
+            <button type="button" class="pill-btn" data-v="BRL" aria-pressed="true" style="flex:1">R$</button>
+            <button type="button" class="pill-btn" data-v="PYG" aria-pressed="false" style="flex:1">Gs</button>
+            <button type="button" class="pill-btn" data-v="USD" aria-pressed="false" style="flex:1">US$</button>
+          </div>
+          <label for="cap" class="lbl">Valor a investir</label>
+          <div class="input-group"><span id="simb">R$</span><input id="cap" inputmode="numeric" value="200.000"></div>
+          <span class="small muted" id="capGs"></span>
+          <div class="fxbox" id="fxbox">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+              <span class="eyebrow" style="font-size:12px">Câmbio de referência</span>
+              <span class="badge" style="background:#fff;border:1px solid var(--line2);color:var(--text2)" id="fxRegra">Cotação do dia</span>
+            </div>
+            <div class="row">
+              <div class="cell"><span id="fxInL">Entrada · R$ → Gs</span><b id="fxIn">—</b></div>
+              <div class="cell"><span id="fxOutL">Saída · Gs → R$</span><b id="fxOut">—</b></div>
+            </div>
+            <span class="small muted" id="fxFonte"></span>
+          </div>
+        </div>
+        <div class="sep"></div>
+        <div id="sliders" style="display:flex;flex-direction:column;gap:22px"></div>
+        <button type="button" class="btn btn-outline btn-sm" id="reset">Voltar ao cenário base</button>
+      </form>
+    </div>
+
+    <!-- RESULTADOS -->
+    <section class="results" aria-live="polite">
+      <div class="hero-num">
+        <span class="eyebrow" style="color:var(--muted)">Lucro líquido por lote de 45 cabeças</span>
+        <span class="v" id="lucro">—</span>
+        <div class="sub"><span id="sub"></span><span class="badge" id="status"></span></div>
+      </div>
+
+      <div class="fit">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span class="k">Seu capital equivale a</span>
+          <span class="big" id="lotes">—</span>
+          <span class="d" id="cotas"></span>
+        </div>
+        <div class="right" style="display:flex;flex-direction:column;gap:6px">
+          <span class="k">Seu lucro projetado por ciclo</span>
+          <span class="mid" id="prop">—</span>
+          <span class="d" id="propLocal"></span>
+        </div>
+      </div>
+
+      <!-- SALVAR -->
+      <div class="card saved" id="salvas">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <h2>Salvar esta simulação</h2>
+          <span class="small muted" id="editing" hidden></span>
+        </div>
+        <div class="save-row">
+          <label for="simNome" class="lbl" style="position:absolute;left:-9999px">Nome da simulação</label>
+          <input class="input" id="simNome" placeholder="Ex.: Cenário conservador">
+          <button type="button" class="btn btn-primary" id="salvar">Salvar simulação</button>
+          <button type="button" class="btn btn-outline" id="salvarNova" hidden>Salvar como nova</button>
+        </div>
+        <div class="sep"></div>
+        <h2 style="font-size:17px">Minhas simulações</h2>
+        <p class="small muted" id="vazio">Você ainda não salvou nenhuma simulação. Ajuste os parâmetros e clique em "Salvar simulação".</p>
+        <ul class="sim-list" id="lista"></ul>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span class="eyebrow" style="color:var(--muted)">Para onde vai a receita do lote</span>
+        <div class="split-bar"><div id="bC" style="background:#7f9c88"></div><div id="bK" style="background:#2d4a36"></div><div id="bL" style="background:var(--tag)"></div></div>
+        <div class="legend"><span><i style="background:#7f9c88"></i>Compra <b id="pC"></b></span><span><i style="background:#2d4a36"></i>Custo operacional <b id="pK"></b></span><span><i style="background:var(--tag);outline:1px solid #c79c00"></i>Lucro <b id="pL"></b></span></div>
+      </div>
+
+      <div class="card scroll" style="padding:4px 26px"><table class="ledger"><tbody id="ledger"></tbody></table></div>
+
+      <div class="stats" id="stats"></div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <h2 style="font-size:24px;font-weight:800;letter-spacing:-.02em">Efeito da taxa de prenhez</h2>
+        <div class="sens" id="sens"></div>
+        <p class="small muted">Novilhas que não emprenham são vendidas pelo preço de novilha vazia definido ao lado.</p>
+      </div>
+
+      <p class="small muted" style="border-top:1px solid var(--line2);padding-top:18px">Projeções com base nos parâmetros acima. Não representam garantia de resultado nem oferta pública de valores mobiliários. Nossa equipe entra em contato pelo WhatsApp ou e-mail do cadastro.</p>
+    </section>
+  </div>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var sess = Session.get();
+  if (!sess) { location.replace("cadastro.html#simular"); return; }
+  if (api.isDemo()) $("demoNote").hidden = false;
+
+  var first = String(sess.nome || "").trim().split(/\s+/)[0];
+  $("who").textContent = first ? "Olá, " + first : sess.email || "";
+  if (first) $("title").innerHTML = U.esc(first) + ", este é o <em>seu cenário.</em>";
+  $("sair").addEventListener("click", function () { Session.clear(); location.href = "index.html"; });
+
+  var N = 45, META = 1500000;
+  var BASE = { moeda: "BRL", cap: 200000, pc: 5250000, pv: 7500000, pz: 5800000, cp: 30, tp: 100, mo: 0, dz: 120 };
+  var s = Object.assign({}, BASE);
+  if (sess.moeda) s.moeda = sess.moeda;
+  if (Number(sess.valor) > 0) s.cap = Number(sess.valor);
+  var fxc = Object.assign({}, P120.CAMBIO_PADRAO);
+  var saved = [], loadedId = null;
+
+  var mi = function (v) { return "Gs " + U.nf(v / 1e6, 1) + " mi"; };
+  var gs = function (v) { return "Gs " + U.nf(Math.round(v)); };
+  var pct = function (v) { return U.nf(v * 100, 1) + "%"; };
+
+  /* ---------- sliders ---------- */
+  var SL = [
+    ["pc", "Compra por novilha", 4500000, 6500000, 50000, mi, "4,5 mi", "6,5 mi"],
+    ["pv", "Venda como vaca prenhe", 6500000, 8500000, 50000, mi, "6,5 mi", "8,5 mi"],
+    ["pz", "Venda da novilha vazia", 4500000, 7000000, 50000, mi, "4,5 mi", "7 mi"],
+    ["tp", "Taxa de prenhez", 40, 100, 1, function (v) { return v + "%"; }, "40%", "100%"],
+    ["cp", "Custo (% da margem bruta)", 10, 50, 1, function (v) { return v + "%"; }, "10%", "50%"],
+    ["mo", "Mortalidade no ciclo", 0, 10, 0.5, function (v) { return U.nf(v, 1) + "%"; }, "0%", "10%"],
+    ["dz", "Duração do ciclo", 90, 180, 5, function (v) { return v + " dias"; }, "90 d", "180 d"]
+  ];
+  $("sliders").innerHTML = SL.map(function (d) {
+    return '<div class="ctl"><div class="ctl-top"><label for="s_' + d[0] + '" class="lbl">' + d[1] + '</label><output id="o_' + d[0] + '" for="s_' + d[0] + '"></output></div>' +
+      '<input type="range" id="s_' + d[0] + '" min="' + d[2] + '" max="' + d[3] + '" step="' + d[4] + '">' +
+      '<div class="ctl-scale"><span>' + d[6] + '</span><span>' + d[7] + '</span></div></div>';
+  }).join("");
+  SL.forEach(function (d) {
+    $("s_" + d[0]).addEventListener("input", function (e) { s[d[0]] = Number(e.target.value); render(); });
+  });
+
+  $("moedas").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-v]"); if (!b) return; s.moeda = b.dataset.v; render(true);
+  });
+  $("cap").addEventListener("input", function (e) { s.cap = U.digits(e.target.value); e.target.value = s.cap ? U.nf(s.cap) : ""; render(); });
+  $("reset").addEventListener("click", function () {
+    var keep = { moeda: s.moeda, cap: s.cap }; s = Object.assign({}, BASE, keep); render(true);
+  });
+
+  /* ---------- cálculo ---------- */
+  function calc(p, tp) {
+    var custoCab = (p.cp / 100) * (p.pv - p.pc);
+    var vivos = N * (1 - p.mo / 100), prenhes = vivos * tp, vazias = vivos - prenhes;
+    var receita = prenhes * p.pv + vazias * p.pz, compra = N * p.pc, custo = N * custoCab;
+    var lucro = receita - compra - custo, capital = compra + custo;
+    return { custoCab: custoCab, prenhes: prenhes, vazias: vazias, receita: receita, compra: compra, custo: custo, lucro: lucro, capital: capital, roi: capital ? lucro / capital : 0 };
+  }
+  function rates() {
+    if (s.moeda === "BRL") return { inn: +fxc.brl_compra, out: +fxc.brl_venda, sym: "R$" };
+    if (s.moeda === "USD") return { inn: +fxc.usd_compra, out: +fxc.usd_venda, sym: "US$" };
+    return { inn: 1, out: 1, sym: "Gs" };
+  }
+  function local(gsv) {
+    var f = rates();
+    if (s.moeda === "BRL") return "≈ " + (gsv / f.out).toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+    if (s.moeda === "USD") return "≈ US$ " + U.nf(gsv / f.out);
+    return "";
+  }
+  function summary() {
+    var r = calc(s, s.tp / 100), f = rates(), capGs = s.cap * f.inn, lotes = r.capital > 0 ? capGs / r.capital : 0;
+    return { r: r, f: f, capGs: capGs, lotes: lotes, prop: r.lucro * lotes };
+  }
+
+  /* ---------- tela ---------- */
+  function render(syncInputs) {
+    SL.forEach(function (d) {
+      var el = $("s_" + d[0]); if (syncInputs || Number(el.value) !== s[d[0]]) el.value = s[d[0]];
+      $("o_" + d[0]).textContent = d[5](s[d[0]]);
+    });
+    document.querySelectorAll("#moedas button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.v === s.moeda)); });
+    if (syncInputs) $("cap").value = s.cap ? U.nf(s.cap) : "";
+
+    var m = summary(), r = m.r, f = m.f;
+    $("simb").textContent = f.sym;
+    $("capGs").textContent = "= " + gs(m.capGs);
+    $("fxbox").hidden = s.moeda === "PYG";
+    $("fxIn").textContent = gs(f.inn); $("fxOut").textContent = gs(f.out);
+    $("fxInL").textContent = "Entrada · " + f.sym + " → Gs"; $("fxOutL").textContent = "Saída · Gs → " + f.sym;
+    $("fxRegra").textContent = fxc.regra || "Cotação do dia";
+    $("fxFonte").textContent = (fxc.fonte || "") + " · " + (fxc.data_cotacao || "") + ". Entrada pela cotação de compra, saída pela de venda.";
+
+    var lc = r.lucro / N;
+    $("lucro").textContent = mi(r.lucro);
+    $("lucro").style.color = r.lucro >= 0 ? "var(--ink)" : "var(--bad)";
+    $("sub").textContent = gs(lc) + " por cabeça · " + s.dz + " dias" + (local(r.lucro) ? " · " + local(r.lucro) : "");
+    var st = $("status");
+    if (lc >= META) { st.className = "badge good"; st.textContent = "Acima de Gs 1,5 mi por cabeça"; }
+    else if (lc >= META * 0.9) { st.className = "badge warn"; st.textContent = "Pouco abaixo de Gs 1,5 mi por cabeça"; }
+    else { st.className = "badge bad"; st.textContent = "Abaixo de Gs 1,5 mi por cabeça"; }
+
+    $("lotes").textContent = U.nf(m.lotes, 2) + (m.lotes >= 1.995 ? " lotes" : " lote");
+    $("cotas").textContent = pct(m.lotes) + " de um lote de " + mi(r.capital);
+    $("prop").textContent = mi(m.prop);
+    $("propLocal").textContent = local(m.prop) || "por ciclo de " + s.dz + " dias";
+
+    var rec = r.receita > 0 ? r.receita : 1, w = function (v) { return Math.max(0, Math.min(100, v / rec * 100)).toFixed(2) + "%"; };
+    $("bC").style.width = w(r.compra); $("bK").style.width = w(r.custo); $("bL").style.width = w(Math.max(0, r.lucro));
+    $("pC").textContent = pct(r.compra / rec); $("pK").textContent = pct(r.custo / rec); $("pL").textContent = pct(Math.max(0, r.lucro) / rec);
+
+    $("ledger").innerHTML =
+      "<tr><td>Receita · " + U.nf(r.prenhes, 1) + " prenhes" + (r.vazias > 0.01 ? " + " + U.nf(r.vazias, 1) + " vazias" : "") + "</td><td>" + gs(r.receita) + "</td></tr>" +
+      "<tr><td>Compra · 45 × " + U.nf(s.pc) + '</td><td class="neg">− ' + gs(r.compra) + "</td></tr>" +
+      "<tr><td>Custo operacional · 45 × " + U.nf(r.custoCab) + '</td><td class="neg">− ' + gs(r.custo) + "</td></tr>" +
+      '<tr class="sum"><td>Lucro líquido do lote</td><td>' + gs(r.lucro) + "</td></tr>";
+
+    var ciclos = 365 / s.dz;
+    $("stats").innerHTML = [["Capital por lote", mi(r.capital)], ["Retorno no ciclo", pct(r.roi)], ["Ciclos por ano", U.nf(ciclos, 1)], ["≈ ao mês", pct(Math.pow(1 + r.roi, 30 / s.dz) - 1)]]
+      .map(function (x) { return '<div class="stat"><span>' + x[0] + "</span><b>" + x[1] + "</b></div>"; }).join("");
+
+    var taxas = [100, 90, 80, 70, 60, 50]; if (taxas.indexOf(s.tp) < 0) taxas.push(s.tp); taxas.sort(function (a, b) { return b - a; });
+    var rows = taxas.map(function (t) { return { t: t, x: calc(s, t / 100) }; });
+    var max = Math.max.apply(null, rows.map(function (o) { return Math.abs(o.x.lucro); })) || 1;
+    $("sens").innerHTML = rows.map(function (o) {
+      var ok = o.x.lucro / N >= META;
+      return '<div class="sens-row' + (o.t === s.tp ? " cur" : "") + '"><b>' + o.t + '%</b><div class="track"><div style="width:' + Math.max(0, o.x.lucro / max * 100).toFixed(1) + "%;background:" + (ok ? "var(--brand)" : "#c26a2e") + '"></div></div><span class="v">' + mi(o.x.lucro) + "</span></div>";
+    }).join("");
+  }
+
+  /* ---------- simulações salvas ---------- */
+  function renderList() {
+    $("countBadge").textContent = saved.length;
+    $("vazio").hidden = saved.length > 0;
+    $("lista").innerHTML = saved.map(function (x) {
+      var res = x.resumo || {};
+      return '<li class="sim-item' + (x.simId === loadedId ? " active" : "") + '"><div class="t"><b>' + U.esc(x.titulo || "Simulação") + "</b><span>" +
+        U.esc((res.capital_txt || "") + (res.lucro_prop_txt ? " · lucro " + res.lucro_prop_txt : "") + " · " + U.dataHora(x.atualizadoEm)) + '</span></div>' +
+        '<div class="acts"><button type="button" class="btn btn-outline btn-sm" data-open="' + U.esc(x.simId) + '">Abrir</button>' +
+        '<button type="button" class="btn btn-sm" style="color:var(--bad);background:transparent" data-del="' + U.esc(x.simId) + '" aria-label="Excluir ' + U.esc(x.titulo) + '">Excluir</button></div></li>';
+    }).join("");
+    $("salvar").textContent = loadedId ? "Salvar alterações" : "Salvar simulação";
+    $("salvarNova").hidden = !loadedId;
+    var cur = saved.filter(function (x) { return x.simId === loadedId; })[0];
+    $("editing").hidden = !cur; if (cur) $("editing").textContent = "Editando: " + cur.titulo;
+  }
+  function load() {
+    return api("listarSimulacoes", { id: sess.id, token: sess.token }).then(function (r) {
+      saved = (r.simulacoes || []).map(function (x) { if (typeof x.params === "string") { try { x.params = JSON.parse(x.params); } catch (e) {} } if (typeof x.resumo === "string") { try { x.resumo = JSON.parse(x.resumo); } catch (e) {} } return x; });
+      renderList();
+    }).catch(function (e) {
+      if (/sess/i.test(e.message)) { Session.clear(); location.replace("cadastro.html#entrar"); return; }
+      U.toast(e.message);
+    });
+  }
+  function doSave(asNew) {
+    var m = summary(), btn = asNew ? $("salvarNova") : $("salvar");
+    var titulo = $("simNome").value.trim() || "Simulação de " + new Date().toLocaleDateString("pt-BR");
+    var resumo = {
+      capital_txt: (m.f.sym === "Gs" ? "Gs " : m.f.sym + " ") + U.nf(s.cap), capital_gs: Math.round(m.capGs),
+      lotes: +m.lotes.toFixed(4), lucro_lote_gs: Math.round(m.r.lucro), lucro_prop_gs: Math.round(m.prop),
+      lucro_prop_txt: mi(m.prop), retorno_ciclo: +(m.r.roi * 100).toFixed(2),
+      cambio_entrada: m.f.inn, cambio_saida: m.f.out, cambio_data: fxc.data_cotacao, cambio_regra: fxc.regra
+    };
+    btn.disabled = true;
+    api("salvarSimulacao", { id: sess.id, token: sess.token, simId: asNew ? null : loadedId, titulo: titulo, params: Object.assign({}, s), resumo: resumo })
+      .then(function (r) { loadedId = r.simId; U.toast("Simulação salva."); return load(); })
+      .catch(function (e) { U.toast(e.message); })
+      .then(function () { btn.disabled = false; });
+  }
+  $("salvar").addEventListener("click", function () { doSave(false); });
+  $("salvarNova").addEventListener("click", function () { doSave(true); });
+
+  var pendingDel = null;
+  $("lista").addEventListener("click", function (e) {
+    var o = e.target.closest("[data-open]"), d = e.target.closest("[data-del]");
+    if (o) {
+      var x = saved.filter(function (y) { return y.simId === o.dataset.open; })[0]; if (!x) return;
+      s = Object.assign({}, BASE, x.params || {}); loadedId = x.simId; $("simNome").value = x.titulo || "";
+      render(true); renderList(); window.scrollTo({ top: 0, behavior: "smooth" }); U.toast("Simulação aberta. Ajuste e salve as alterações.");
+    }
+    if (d) {
+      if (pendingDel !== d.dataset.del) { pendingDel = d.dataset.del; d.textContent = "Confirmar"; return; }
+      api("excluirSimulacao", { id: sess.id, token: sess.token, simId: d.dataset.del })
+        .then(function () { if (loadedId === pendingDel) loadedId = null; pendingDel = null; U.toast("Simulação excluída."); return load(); })
+        .catch(function (err) { U.toast(err.message); });
+    }
+  });
+
+  /* ---------- início ---------- */
+  render(true);
+  renderList();
+  api("config").then(function (r) { if (r.cambio) { fxc = Object.assign({}, fxc, r.cambio); render(); } }).catch(function () {});
+  load();
+})();
+</script>
+</body>
+</html>
