@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cadastro · Prenhez 120</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="split">
+  <aside class="side">
+    <svg class="topo" aria-hidden="true" viewBox="0 0 600 900" preserveAspectRatio="xMidYMid slice" fill="none" stroke="#e9eee6" stroke-width="1.2">
+      <ellipse cx="420" cy="760" rx="90" ry="54"></ellipse><ellipse cx="420" cy="760" rx="170" ry="104"></ellipse>
+      <ellipse cx="410" cy="770" rx="260" ry="160"></ellipse><ellipse cx="400" cy="780" rx="360" ry="224"></ellipse>
+      <ellipse cx="390" cy="790" rx="470" ry="294"></ellipse><ellipse cx="380" cy="800" rx="590" ry="370"></ellipse>
+    </svg>
+    <a class="logo" href="index.html" style="position:relative"><i aria-hidden="true"></i>Prenhez 120</a>
+    <div style="position:relative;display:flex;flex-direction:column;gap:18px">
+      <span class="eyebrow" style="color:#b9cdbf">Cadastro de investidor</span>
+      <h1>Cadastre-se e simule <em>sem custo</em>.</h1>
+      <p>Leva cerca de dois minutos. Depois do cadastro você abre o simulador, e as simulações que salvar ficam guardadas para você voltar e ajustar quando quiser.</p>
+    </div>
+    <ol style="position:relative">
+      <li><b>01</b>Seus dados</li>
+      <li><b>02</b>Simulação do seu investimento</li>
+      <li><b>03</b>Contato da nossa equipe</li>
+    </ol>
+    <div class="lock" style="position:relative">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+      <span>Seus dados ficam apenas com a equipe do projeto e são usados para contato e apresentação, conforme a LGPD.</span>
+    </div>
+  </aside>
+
+  <main class="formcol">
+    <a href="index.html" class="small" style="display:inline-flex;align-items:center;gap:8px;color:var(--text2);text-decoration:none;min-height:44px;width:fit-content">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"></path></svg>
+      Voltar à apresentação
+    </a>
+
+    <div class="notice warn" id="demoNote" hidden>Modo de demonstração: os dados ficam salvos apenas neste navegador até a planilha ser ligada.</div>
+
+    <div class="notice ok" id="already" hidden>
+      Você já tem cadastro neste aparelho como <b id="alreadyName"></b>.
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px">
+        <a class="btn btn-primary btn-sm" href="simulador.html">Ir para o simulador</a>
+        <button type="button" class="btn btn-outline btn-sm" id="logout">Usar outro cadastro</button>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Cadastro ou entrada">
+      <button type="button" role="tab" id="tabNovo" aria-selected="true" aria-controls="cad">Criar cadastro</button>
+      <button type="button" role="tab" id="tabEntrar" aria-selected="false" aria-controls="login">Já tenho cadastro</button>
+    </div>
+
+    <!-- NOVO CADASTRO -->
+    <form id="cad" role="tabpanel" aria-labelledby="tabNovo" novalidate style="display:flex;flex-direction:column;gap:44px">
+      <fieldset>
+        <legend><b>01</b><span>Identificação</span></legend>
+        <div class="field">
+          <span class="lbl" id="lblTipo">Tipo de investidor</span>
+          <div class="pills" role="group" aria-labelledby="lblTipo" data-group="tipo">
+            <button type="button" class="pill-btn" data-v="Pessoa física" aria-pressed="true">Pessoa física</button>
+            <button type="button" class="pill-btn" data-v="Pessoa jurídica" aria-pressed="false">Pessoa jurídica</button>
+          </div>
+        </div>
+        <div class="field"><label for="nome">Nome completo ou razão social</label><input class="input" id="nome" name="nome" autocomplete="name" required><span class="err" hidden></span></div>
+        <div class="grid2">
+          <div class="field"><label for="pais">País de residência</label>
+            <select class="input" id="pais" name="pais"><option>Brasil</option><option>Paraguai</option><option>Outro</option></select></div>
+          <div class="field"><label for="cidade">Cidade / Estado ou Departamento</label><input class="input" id="cidade" name="cidade" autocomplete="address-level2" required><span class="err" hidden></span></div>
+          <div class="field"><label for="documento_tipo">Documento</label>
+            <select class="input" id="documento_tipo" name="documento_tipo"><option>CPF</option><option>CNPJ</option><option>Cédula de Identidad (PY)</option><option>RUC (PY)</option><option>Passaporte</option></select></div>
+          <div class="field"><label for="documento">Número do documento</label><input class="input" id="documento" name="documento" required><span class="err" hidden></span></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><b>02</b><span>Contato</span></legend>
+        <div class="grid2">
+          <div class="field"><label for="email">E-mail</label><input class="input" id="email" name="email" type="email" autocomplete="email" required><span class="err" hidden></span></div>
+          <div class="field"><label for="whatsapp">WhatsApp com DDI</label><input class="input" id="whatsapp" name="whatsapp" type="tel" autocomplete="tel" placeholder="+55 67 9…  ou  +595 9…" required><span class="err" hidden></span></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend><b>03</b><span>Intenção de investimento</span></legend>
+        <div class="field">
+          <span class="lbl" id="lblMoeda">Moeda</span>
+          <div class="pills" role="group" aria-labelledby="lblMoeda" data-group="moeda">
+            <button type="button" class="pill-btn" data-v="BRL" aria-pressed="true">Real (R$)</button>
+            <button type="button" class="pill-btn" data-v="PYG" aria-pressed="false">Guarani (Gs)</button>
+            <button type="button" class="pill-btn" data-v="USD" aria-pressed="false">Dólar (US$)</button>
+          </div>
+        </div>
+        <div class="field"><label for="valor">Valor que pretende investir</label>
+          <div class="input-group"><span id="simbolo">R$</span><input id="valor" name="valor" inputmode="numeric" placeholder="200.000" required></div>
+          <span class="err" hidden></span></div>
+        <div class="grid2">
+          <div class="field"><label for="prazo">Prazo pretendido</label>
+            <select class="input" id="prazo" name="prazo"><option>1 ciclo (cerca de 4 meses)</option><option>Até 1 ano</option><option>1 a 2 anos</option><option>Mais de 2 anos</option></select></div>
+          <div class="field"><label for="experiencia">Já investiu em pecuária?</label>
+            <select class="input" id="experiencia" name="experiencia"><option>Não</option><option>Sim, como investidor</option><option>Sim, sou produtor</option></select></div>
+          <div class="field"><label for="origem">Como conheceu o projeto</label>
+            <select class="input" id="origem" name="origem"><option>Indicação</option><option>WhatsApp</option><option>Redes sociais</option><option>Evento</option><option>Outro</option></select></div>
+        </div>
+        <div class="field"><label for="mensagem">Observações <span class="muted" style="font-weight:400">(opcional)</span></label><textarea class="input" id="mensagem" name="mensagem"></textarea></div>
+      </fieldset>
+
+      <label class="consent" id="consentBox" for="consentimento">
+        <input type="checkbox" id="consentimento" name="consentimento">
+        <span>Autorizo o uso dos meus dados para contato e apresentação do projeto, conforme a Lei Geral de Proteção de Dados (Lei 13.709/2018) e a legislação paraguaia aplicável. Entendo que o simulador mostra projeções e não garantia de resultado.</span>
+      </label>
+
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center">
+        <button class="btn btn-primary btn-lg" type="submit" id="send">
+          Cadastrar e abrir o simulador
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </button>
+        <span id="status" role="status" style="font-size:15px;font-weight:600"></span>
+      </div>
+    </form>
+
+    <!-- JÁ TENHO CADASTRO -->
+    <form id="login" role="tabpanel" aria-labelledby="tabEntrar" novalidate hidden class="card" style="padding:32px;display:flex;flex-direction:column;gap:20px;max-width:560px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <h2 style="font-size:26px;font-weight:800;letter-spacing:-.02em">Acessar minhas simulações</h2>
+        <p class="muted" style="font-size:15px;line-height:1.55">Use o mesmo e-mail e número de documento do cadastro.</p>
+      </div>
+      <div class="field"><label for="l_email">E-mail</label><input class="input" id="l_email" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="l_doc">Número do documento</label><input class="input" id="l_doc" required></div>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center">
+        <button class="btn btn-primary" type="submit" id="l_send">Entrar</button>
+        <span id="l_status" role="status" style="font-size:15px;font-weight:600"></span>
+      </div>
+    </form>
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var hash = (location.hash || "").slice(1);
+  var sess = Session.get();
+
+  if (api.isDemo()) $("demoNote").hidden = false;
+
+  // Já cadastrado neste aparelho: quem clicou em "Simular" vai direto ao simulador
+  if (sess) {
+    if (hash === "simular") { location.replace("simulador.html"); return; }
+    $("alreadyName").textContent = sess.nome || sess.email;
+    $("already").hidden = false;
+  }
+  $("logout").addEventListener("click", function () { Session.clear(); $("already").hidden = true; U.toast("Pronto. Faça o cadastro ou entre com outro."); });
+
+  // Abas
+  function tab(which) {
+    var novo = which !== "entrar";
+    $("tabNovo").setAttribute("aria-selected", String(novo));
+    $("tabEntrar").setAttribute("aria-selected", String(!novo));
+    $("cad").hidden = !novo; $("login").hidden = novo;
+  }
+  $("tabNovo").addEventListener("click", function () { tab("novo"); });
+  $("tabEntrar").addEventListener("click", function () { tab("entrar"); });
+  if (hash === "entrar") tab("entrar");
+
+  // Botões de escolha (tipo e moeda)
+  var picked = { tipo: "Pessoa física", moeda: "BRL" };
+  document.querySelectorAll("[data-group]").forEach(function (g) {
+    g.addEventListener("click", function (e) {
+      var b = e.target.closest("button[data-v]"); if (!b) return;
+      g.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+      picked[g.dataset.group] = b.dataset.v;
+      if (g.dataset.group === "moeda") $("simbolo").textContent = { BRL: "R$", PYG: "Gs", USD: "US$" }[b.dataset.v];
+    });
+  });
+
+  // Valor com separador de milhar
+  $("valor").addEventListener("input", function (e) {
+    var n = U.digits(e.target.value); e.target.value = n ? U.nf(n) : "";
+  });
+
+  function setErr(id, msg) {
+    var f = $(id).closest(".field"); var er = f.querySelector(".err");
+    f.classList.toggle("bad", !!msg); if (er) { er.hidden = !msg; er.textContent = msg || ""; }
+  }
+  function validate() {
+    var bad = [];
+    var rules = {
+      nome: function (v) { return v ? "" : "Preencha este campo."; },
+      cidade: function (v) { return v ? "" : "Preencha este campo."; },
+      documento: function (v) { return U.normDoc(v).length >= 5 ? "" : "Informe o número do documento."; },
+      email: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? "" : "Confira o e-mail."; },
+      whatsapp: function (v) { return v.replace(/\D/g, "").length >= 10 ? "" : "Inclua DDI e DDD."; },
+      valor: function (v) { return U.digits(v) > 0 ? "" : "Informe um valor."; }
+    };
+    Object.keys(rules).forEach(function (id) { var m = rules[id]($(id).value.trim()); setErr(id, m); if (m) bad.push(id); });
+    var ok = $("consentimento").checked; $("consentBox").classList.toggle("bad", !ok);
+    return { bad: bad, consent: ok };
+  }
+
+  $("cad").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var v = validate(), st = $("status");
+    if (v.bad.length || !v.consent) {
+      st.style.color = "var(--bad)";
+      st.textContent = v.bad.length ? "Revise os campos marcados em vermelho." : "Marque a autorização de uso dos dados para continuar.";
+      if (v.bad.length) $(v.bad[0]).focus();
+      return;
+    }
+    var dados = {
+      tipo: picked.tipo, nome: $("nome").value.trim(), pais: $("pais").value, cidade: $("cidade").value.trim(),
+      documento_tipo: $("documento_tipo").value, documento: $("documento").value.trim(),
+      email: $("email").value.trim(), whatsapp: $("whatsapp").value.trim(),
+      moeda: picked.moeda, valor: U.digits($("valor").value), prazo: $("prazo").value,
+      experiencia: $("experiencia").value, origem: $("origem").value, mensagem: $("mensagem").value.trim(),
+      consentimento: "sim", pagina_origem: hash || "direto"
+    };
+    $("send").disabled = true; st.style.color = "var(--text2)"; st.textContent = "Salvando seu cadastro…";
+    api("cadastro", { dados: dados }).then(function (r) {
+      Session.set({ id: r.id, token: r.token, nome: r.nome, email: r.email, moeda: r.moeda || dados.moeda, valor: r.valor || dados.valor });
+      st.style.color = "var(--ok)"; st.textContent = "Cadastro salvo. Abrindo o simulador…";
+      location.href = "simulador.html";
+    }).catch(function (e) {
+      st.style.color = "var(--bad)"; st.textContent = e.message; $("send").disabled = false;
+    });
+  });
+
+  $("login").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var st = $("l_status"), em = $("l_email").value.trim(), dc = $("l_doc").value.trim();
+    if (!em || !dc) { st.style.color = "var(--bad)"; st.textContent = "Preencha e-mail e documento."; return; }
+    $("l_send").disabled = true; st.style.color = "var(--text2)"; st.textContent = "Procurando seu cadastro…";
+    api("login", { email: em, documento: dc }).then(function (r) {
+      Session.set({ id: r.id, token: r.token, nome: r.nome, email: r.email, moeda: r.moeda, valor: r.valor });
+      location.href = "simulador.html";
+    }).catch(function (e) {
+      st.style.color = "var(--bad)"; st.textContent = e.message; $("l_send").disabled = false;
+    });
+  });
+})();
+</script>
+</body>
+</html>
